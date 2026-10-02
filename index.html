@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Перелёт Земля — Луна (версия 1.1)</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Перелёт Земля — Луна</h1>
+    <p class="subtitle">Учебная упрощённая версия</p>
+  </header>
+
+  <main>
+    <section id="controls">
+      <div class="group">
+        <label for="dvPower">Сила импульса TLI (м/с)</label>
+        <input type="range" id="dvPower" min="2000" max="4500" value="3200" step="50">
+        <div class="value-row"><span id="dvPowerVal">3200</span> м/с</div>
+      </div>
+
+      <div class="group">
+        <label for="dvAngle">Направление импульса (°)</label>
+        <input type="range" id="dvAngle" min="-60" max="60" value="0" step="1">
+        <div class="value-row"><span id="dvAngleVal">0</span>°</div>
+      </div>
+
+      <div class="buttons">
+        <button id="btnStart" class="primary">Старт</button>
+        <button id="btnImpulse" disabled>Дать импульс TLI</button>
+        <button id="btnRestart">Заново</button>
+      </div>
+
+      <p class="hint">Компьютер: ← → сила, ↑ ↓ угол, Пробел — импульс</p>
+    </section>
+
+    <section id="canvas-wrap">
+      <canvas id="game"></canvas>
+      <div id="hud">
+        <div>Время: <span id="time">0.0</span> сут</div>
+        <div>Скорость: <span id="speed">0.00</span> км/с</div>
+        <div>Σ ΔV: <span id="totalDV">0</span> м/с</div>
+        <div>Статус: <span id="status">Ожидание</span></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="result" class="hidden">
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <button id="btnResultOk">Заново</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Перелёт Земля — Луна</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="scene"></canvas>
+
+    <!-- Верхняя панель: HUD + кнопки управления видимостью -->
+    <div id="hud" class="hud">
+      <div class="telemetry" id="telemetry">
+        <div><span class="label">Время:</span> <span id="t-time">0.0 с</span></div>
+        <div><span class="label">Скорость:</span> <span id="t-speed">0.0</span></div>
+        <div><span class="label">Пройдено:</span> <span id="t-dist">0.0</span></div>
+        <div><span class="label">ΔV:</span> <span id="t-dv">0.0</span></div>
+      </div>
+      <div id="status" class="status">Готов к запуску</div>
+      <div class="hud-buttons">
+        <button id="toggle-hud" class="icon-btn" title="Свернуть/развернуть HUD">☰</button>
+        <button id="toggle-ui" class="icon-btn" title="Скрыть/показать весь интерфейс">⛶</button>
+      </div>
+    </div>
+
+    <!-- Кнопки масштаба справа -->
+    <div id="zoom-controls" class="zoom-controls">
+      <button id="zoom-in" class="icon-btn" title="Приблизить">＋</button>
+      <button id="zoom-out" class="icon-btn" title="Отдалить">−</button>
+      <button id="zoom-reset" class="icon-btn" title="Сбросить масштаб">⟲</button>
+    </div>
+
+    <!-- Панель управления -->
+    <div id="controls" class="controls">
+      <div class="panel">
+        <div class="panel-title">Стартовый импульс</div>
+        <label>
+          Сила: <span id="v-power">7.00</span>
+          <input id="power" type="range" min="0" max="10" step="0.01" value="7.00" />
+        </label>
+        <label>
+          Угол: <span id="v-angle">0°</span>
+          <input id="angle" type="range" min="-20" max="20" step="0.5" value="0" />
+        </label>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Корректировка <span id="dv-budget-hint" class="muted"></span></div>
+        <label>
+          Сила: <span id="v-burn-power">0.30</span>
+          <input id="burn-power" type="range" min="0" max="2" step="0.01" value="0.30" />
+        </label>
+        <label>
+          Направление: <span id="v-burn-dir">0°</span>
+          <input id="burn-dir" type="range" min="-180" max="180" step="1" value="0" />
+        </label>
+        <button id="burn" class="burn-btn" disabled>Дать импульс</button>
+      </div>
+
+      <div class="buttons">
+        <button id="launch">Запуск</button>
+        <button id="reset">Сброс</button>
+      </div>
+      <p class="hint">Старт снизу от Земли. Угол 0° — к Луне; +3…+8° компенсирует притяжение.</p>
+    </div>
+
+    <!-- Кнопка «показать интерфейс», когда он скрыт -->
+    <button id="show-ui" class="show-ui icon-btn hidden" title="Показать интерфейс">⛶</button>
+
+    <!-- Экран итогов -->
+    <div id="result" class="result hidden">
+      <div class="result-card">
+        <h2 id="result-title">Успех!</h2>
+        <p id="result-subtitle" class="muted"></p>
+        <div class="result-stats">
+          <div><span class="label">Время:</span> <span id="r-time">—</span></div>
+          <div><span class="label">Пройдено:</span> <span id="r-dist">—</span></div>
+          <div><span class="label">ΔV:</span> <span id="r-dv">—</span></div>
+        </div>
+        <div class="result-records">
+          <div><span class="label">Лучшее время:</span> <span id="r-best-time">—</span></div>
+          <div><span class="label">Лучший ΔV:</span> <span id="r-best-dv">—</span></div>
+        </div>
+        <div id="result-new-record" class="new-record hidden">🏆 Новый рекорд!</div>
+        <div class="result-buttons">
+          <button id="again">Ещё раз</button>
+          <button id="reset-records" class="secondary">Сбросить рекорды</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>

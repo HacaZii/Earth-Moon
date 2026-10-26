@@ -1,0 +1,345 @@
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: #05070f;
+  color: #e7ecf5;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  overflow: hidden;
+  /* Safe area для iPhone с «бровью» */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+}
+
+#app {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+#scene {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+}
+
+/* ---------- HUD ---------- */
+.hud {
+  position: absolute;
+  top: calc(8px + var(--safe-top));
+  left: calc(8px + var(--safe-left));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  max-width: calc(100vw - 120px);
+}
+
+.hud.collapsed .telemetry,
+.hud.collapsed .status {
+  display: none;
+}
+
+.hud-buttons {
+  display: flex;
+  gap: 6px;
+  pointer-events: auto;
+}
+
+.telemetry {
+  background: rgba(10, 16, 30, 0.85);
+  border: 1px solid rgba(120, 160, 255, 0.25);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  line-height: 1.5;
+  min-width: 190px;
+  backdrop-filter: blur(4px);
+}
+
+.label { color: #8fa4c8; }
+.muted { color: #7f92b3; font-weight: 400; font-size: 12px; }
+
+.status {
+  background: rgba(10, 16, 30, 0.85);
+  border: 1px solid rgba(120, 160, 255, 0.35);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-block;
+  width: fit-content;
+}
+
+.status.success { border-color: #38d47a; color: #38d47a; }
+.status.fail    { border-color: #ff5a6a; color: #ff5a6a; }
+
+/* ---------- Иконки-кнопки ---------- */
+.icon-btn {
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 8px;
+  font-size: 18px;
+  line-height: 1;
+  color: #dbe6f8;
+  background: rgba(10, 16, 30, 0.9);
+  border: 1px solid rgba(120, 160, 255, 0.35);
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-btn:active { transform: translateY(1px); }
+
+/* ---------- Zoom ---------- */
+.zoom-controls {
+  position: absolute;
+  top: calc(8px + var(--safe-top));
+  right: calc(8px + var(--safe-right));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 4;
+}
+
+/* ---------- Панель управления ---------- */
+.controls {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: calc(8px + var(--safe-bottom));
+  background: rgba(10, 16, 30, 0.92);
+  border: 1px solid rgba(120, 160, 255, 0.25);
+  border-radius: 12px;
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+  backdrop-filter: blur(6px);
+  z-index: 5;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.controls.hidden { display: none; }
+
+.panel {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(120, 160, 255, 0.15);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.panel-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #8fa4c8;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.controls label {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  color: #c9d6ee;
+}
+
+.controls input[type="range"] {
+  width: 100%;
+  height: 26px;
+  accent-color: #5aa9ff;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.buttons button {
+  flex: 1;
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #06101f;
+  background: #5aa9ff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.buttons button#reset {
+  background: #2a3a55;
+  color: #dbe6f8;
+}
+
+.burn-btn {
+  min-height: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 220, 160, 0.6);
+  background: rgba(56, 212, 122, 0.15);
+  color: #baf3cf;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.burn-btn:disabled {
+  border-color: rgba(120, 220, 160, 0.2);
+  background: rgba(120, 220, 160, 0.05);
+  color: rgba(186, 243, 207, 0.35);
+  cursor: not-allowed;
+}
+
+.buttons button:active,
+.burn-btn:not(:disabled):active { transform: translateY(1px); }
+
+.hint {
+  margin: 0;
+  font-size: 12px;
+  color: #7f92b3;
+  line-height: 1.4;
+}
+
+/* ---------- Кнопка «Показать интерфейс» ---------- */
+.show-ui {
+  position: absolute;
+  bottom: calc(12px + var(--safe-bottom));
+  right: calc(12px + var(--safe-right));
+  z-index: 6;
+}
+
+.show-ui.hidden { display: none; }
+
+/* ---------- Экран итогов ---------- */
+.result {
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 7, 15, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  padding: 16px;
+  backdrop-filter: blur(3px);
+}
+
+.result.hidden { display: none; }
+
+.result-card {
+  background: rgba(12, 20, 36, 0.95);
+  border: 1px solid rgba(120, 160, 255, 0.35);
+  border-radius: 14px;
+  padding: 20px;
+  max-width: 420px;
+  width: 100%;
+  display: grid;
+  gap: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.result-card h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.result-card.success h2 { color: #38d47a; }
+.result-card.fail h2 { color: #ff5a6a; }
+
+.result-stats,
+.result-records {
+  display: grid;
+  gap: 4px;
+  font-size: 14px;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.new-record {
+  color: #ffd166;
+  font-weight: 700;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: rgba(255, 209, 102, 0.12);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+}
+
+.new-record.hidden { display: none; }
+
+.result-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.result-buttons button {
+  flex: 1;
+  min-height: 44px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #06101f;
+  background: #5aa9ff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.result-buttons button.secondary {
+  background: #2a3a55;
+  color: #dbe6f8;
+}
+
+/* ---------- Мобильные правки ---------- */
+@media (max-width: 720px) {
+  /* На узком экране в портрете панель управления компактнее */
+  .controls {
+    max-height: 45vh;
+    padding: 8px;
+    gap: 6px;
+  }
+  .panel { padding: 6px; gap: 4px; }
+  .controls label { font-size: 13px; }
+  .controls input[type="range"] { height: 32px; } /* удобнее пальцем */
+  .buttons button { min-height: 46px; font-size: 15px; }
+  .burn-btn { min-height: 44px; }
+  .telemetry { font-size: 12px; min-width: 160px; padding: 6px 8px; }
+  .status { font-size: 12px; padding: 5px 8px; }
+  .icon-btn { min-width: 42px; min-height: 42px; }
+  .hint { display: none; } /* экономия места */
+}
+
+/* На широком экране — правая колонка */
+@media (min-width: 721px) {
+  .controls {
+    left: auto;
+    right: 12px;
+    bottom: 12px;
+    width: 340px;
+    max-height: none;
+  }
+  .hud { max-width: none; }
+}
+
+/* iPhone X+ и подобные: чуть больше отступ от «брови» */
+@supports (padding: env(safe-area-inset-top)) {
+  .controls { bottom: calc(8px + env(safe-area-inset-bottom)); }
+  .hud { top: calc(8px + env(safe-area-inset-top)); left: calc(8px + env(safe-area-inset-left)); }
+  .zoom-controls { top: calc(8px + env(safe-area-inset-top)); right: calc(8px + env(safe-area-inset-right)); }
+}
